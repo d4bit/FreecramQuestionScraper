@@ -7,3 +7,4 @@ Node_modules/
 __pycache__/
 *.log
 .idea/
+scraped*.json
