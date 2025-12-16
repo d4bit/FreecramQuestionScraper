@@ -1,2 +1,9 @@
 links.py
 *.csv
+Node_modules/
+.DS_Store
+.env
+.vscode/
+__pycache__/
+*.log
+.idea/

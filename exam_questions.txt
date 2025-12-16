@@ -1,0 +1,140 @@
+================================================================================
+EXAM QUESTION LIST - Total: 27 questions (Simplified List)
+Date: 12/16/2025, 11:12:25 AM
+================================================================================
+
+1. 1 commentWhen configuring a prompt template, an Agentforce Specialist...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/when-configuring-a-prompt-template-an-agentforce-specialist-previews-the-results-of-the-prompt-template
+
+----------------------------------------------------------------------
+
+2. Universal Containers (UC) wants to make a sales proposal and...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-wants-to-make-a-sales-proposal-and-directly-use-data-from-multiple-unrelated
+
+----------------------------------------------------------------------
+
+3. Universal Containers tests out a new Einstein Generative AI ...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-tests-out-a-new-einstein-generative-ai-feature-for-its-sales-team-to-create-personali
+
+----------------------------------------------------------------------
+
+4. In a Knowledge-based data library configuration, what is the...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/in-a-knowledge-based-data-library-configuration-what-is-the-primary-difference-between-the-identifying
+
+----------------------------------------------------------------------
+
+5. Amid their busy schedules, sales reps at Universal Container...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/amid-their-busy-schedules-sales-reps-at-universal-containers-dedicate-time-to-follow-up-with-prospects
+
+----------------------------------------------------------------------
+
+6. Universal Containers (UC) wants to limit an agent's access t...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-wants-to-limit-an-agent-s-access-to-knowledge-articles-while-deploying-the
+
+----------------------------------------------------------------------
+
+7. What should Universal Containers consider when deploying an ...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/what-should-universal-containers-consider-when-deploying-an-agentforce-service-agent-with-multiple-topics
+
+----------------------------------------------------------------------
+
+8. Universal Containers needs its sales reps to be able to only...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-needs-its-sales-reps-to-be-able-to-only-execute-prompt-templates-what-should-the
+
+----------------------------------------------------------------------
+
+9. Universal Containers (UC) implements a custom retriever to i...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-implements-a-custom-retriever-to-improve-the-accuracy-of-ai-generated-responses
+
+----------------------------------------------------------------------
+
+10. 3 commentUniversal Containers wants to implement a solution in Salesf...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-wants-to-implement-a-solution-in-salesforce-with-a-custom-ux-that-allows-users-to
+
+----------------------------------------------------------------------
+
+11. 4 commentUniversal Containers wants to leverage the Record Snapshots ...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-wants-to-leverage-the-record-snapshots-grounding-feature-in-a-prompt-template-what
+
+----------------------------------------------------------------------
+
+12. What is a valid use case for Data Cloud retrievers?...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/what-is-a-valid-use-case-for-data-cloud-retrievers
+
+----------------------------------------------------------------------
+
+13. 4 commentWhat is true of Agentforce Testing Center?...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/what-is-true-of-agentforce-testing-center
+
+----------------------------------------------------------------------
+
+14. Universal Containers (UC) currently tracks Leads with a cust...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-currently-tracks-leads-with-a-custom-object-uc-is-preparing-to-implement-the
+
+----------------------------------------------------------------------
+
+15. Universal Containers (UC) wants to implement an AI-powered c...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-wants-to-implement-an-ai-powered-customer-service-agent-that-can-retrieve
+
+----------------------------------------------------------------------
+
+16. Universal Containers deploys a new Agentforce Service Agent ...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-deploys-a-new-agentforce-service-agent-into-the-company-s-website-but-is-getting
+
+----------------------------------------------------------------------
+
+17. 1 commentWhat is the role of the large language model (LLM) in unders...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/what-is-the-role-of-the-large-language-model-llm-in-understanding-intent-and-executing-an-agent-action
+
+----------------------------------------------------------------------
+
+18. For an Agentforce Data Library that contains uploaded files,...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/for-an-agentforce-data-library-that-contains-uploaded-files-what-occurs-once-it-is-created-and-configured
+
+----------------------------------------------------------------------
+
+19. An Agentforce Specialist is creating a custom action in Agen...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/an-agentforce-specialist-is-creating-a-custom-action-in-agentforce-which-option-is-available-for-the
+
+----------------------------------------------------------------------
+
+20. 2 commentUniversal Containers (UC) has configured an Agentforce Data ...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-has-configured-an-agentforce-data-library-using-knowledge-articles-when-testing
+
+----------------------------------------------------------------------
+
+21. Universal Containers has grounded a prompt template with a r...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-has-grounded-a-prompt-template-with-a-related-list-during-user-acceptance-testing
+
+----------------------------------------------------------------------
+
+22. Which element in the Omni-Channel Flow should be used to con...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/which-element-in-the-omni-channel-flow-should-be-used-to-connect-the-flow-with-the-agent
+
+----------------------------------------------------------------------
+
+23. A customer service representative is looking at a custom obj...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/a-customer-service-representative-is-looking-at-a-custom-object-that-stores-travel-information-they
+
+----------------------------------------------------------------------
+
+24. 1 commentUniversal Containers built a Field Generation prompt templat...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-built-a-field-generation-prompt-template-that-worked-for-many-records-but-users
+
+----------------------------------------------------------------------
+
+25. Universal Containers (UC) wants to ensure the effectiveness,...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-uc-wants-to-ensure-the-effectiveness-reliability-and-trust-of-its-agents-prior
+
+----------------------------------------------------------------------
+
+26. 3 commentUniversal Containers wants to reduce overall customer suppor...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/universal-containers-wants-to-reduce-overall-customer-support-handling-time-by-minimizing-the-time-spent
+
+----------------------------------------------------------------------
+
+27. How does an Agent respond when it can't understand the reque...
+   Link: https://www.freecram.net/question/Salesforce.Agentforce-Specialist.v2025-09-22.q27/how-does-an-agent-respond-when-it-can-t-understand-the-request-or-find-any-requested-information
+
+----------------------------------------------------------------------
+
