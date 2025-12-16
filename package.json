@@ -1,8 +1,8 @@
 {
-  "name": "generatecsvfreecram",
+  "name": "freecram-question-scraper",
   "version": "1.0.0",
-  "description": "Este script realiza un scraping de varias páginas web, recopilando preguntas, opciones, y explicaciones de respuestas. Luego, exporta estos datos a un archivo CSV. Utiliza la biblioteca requests para obtener el contenido de las páginas, BeautifulSoup para analizar el HTML, y csv para escribir los datos en el archivo CSV. Finalmente, muestra un mensaje indicando que los datos han sido exportados exitosamente.",
-  "main": "web.js",
+  "description": "Scraper for online exam questions.",
+  "main": "main.js",
   "dependencies": {
     "agent-base": "^7.1.4",
     "ansi-escapes": "^4.3.2",
