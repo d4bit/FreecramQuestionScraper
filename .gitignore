@@ -1,5 +1,5 @@
-links.py
 *.csv
+*.txt
 Node_modules/
 .DS_Store
 .env
@@ -7,5 +7,3 @@ Node_modules/
 __pycache__/
 *.log
 .idea/
-*.txt
-*.csv
