@@ -18,7 +18,8 @@ const {
     closeReadline,
     saveLinksToFile, 
     saveQaToFile,
-    printSeparator
+    printSeparator,
+    generateCSVFromQa
 } = require('./utils');
 
 // --- CORE SCRAPING FUNCTIONS ---
@@ -250,7 +251,6 @@ async function scrapeDeepContent(linksArray) {
     } finally {
         if (browser) {
             await browser.close();
-            log(MESSAGES.LOG_BROWSER_CLOSED, 'info');
         }
     }
 }
@@ -294,6 +294,7 @@ async function main() {
         if (qaData.length > 0) {
             // 7. AUTO-SAVE QA Data
             saveQaToFile(qaData, DEFAULT_FILENAME_QA, MESSAGES);
+            generateCSVFromQa(qaData, DEFAULT_FILENAME_QA, MESSAGES);
         } else {
              log(MESSAGES.LOG_DEEP_FAIL_EMPTY, 'error');
         }

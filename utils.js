@@ -131,9 +131,61 @@ function saveQaToFile(qaData, filename, MESSAGES) {
     try {
         const jsonContent = JSON.stringify(qaData, null, 2);
         fs.writeFileSync(filename, jsonContent, 'utf8');
-        log(`Structured QA data saved successfully to: ${filename}`, 'success');
     } catch (error) {
         log(MESSAGES.ERROR_FILE_SAVE(error.message), 'error');
+    }
+}
+
+/**
+ * Generates CSV content from structured QA data with columns for quiz structure.
+ * @param {Array<Object>} qaData Array of Question/Answer objects.
+ * @param {string} filename The name of the file to save to.
+ * @param {Object} MESSAGES Message object from config.
+ */
+function generateCSVFromQa(qaData, filename, MESSAGES) {
+    try {
+        if (!qaData || qaData.length === 0) {
+            log('No data available to generate CSV.', 'warn');
+            return;
+        }
+
+        // CSV Headers in English, using COMMA (,) as the column delimiter
+        let csvContent = "QUESTION,CORRECT ANSWER,YOUR ANSWER,RESULT\n";
+
+        qaData.forEach(item => {
+            const separator = '\n'; // Will be used for line breaks inside the cell
+
+            // 1. Format Column A (Question + Options)
+            let questionText = `Nº ${item.questionNumber}: ${item.question}${separator}`;
+            
+            item.options.forEach((option, index) => {
+                const optionLetter = String.fromCharCode(65 + index); // 65 is 'A'
+                questionText += `${optionLetter}) ${option}${separator}`;
+            });
+
+            const columnA = `"${questionText.trim().replace(/"/g, '""')}"`; 
+
+            // 2. Column B: Correct Answer
+            const columnB = item.answer || 'N/A';
+            const rowNumber = item.questionNumber + 1;
+
+            // 3. Column C: Client Answer (Initially Empty)
+            const columnC = '';
+
+            // 4. Column D: Comparison Formula
+            const formula = `=IF(ISBLANK(C${rowNumber}); "No Answer Selected"; IF(C${rowNumber}=B${rowNumber}; "✅ CORRECT"; "❌ CORRECT ANSWER:" B${rowNumber}))`;
+            
+            // CONCATENATE: Use COMMA (,) as the column separator
+            csvContent += `${columnA},${columnB},${columnC},${formula}\n`;
+        });
+        
+        // The final CSV filename
+        const finalFilename = filename.replace('.json', '.csv');
+        fs.writeFileSync(finalFilename, csvContent, 'utf8');
+        log(`Quiz CSV file generated successfully: ${finalFilename}`, 'success');
+
+    } catch (error) {
+        log(MESSAGES.ERROR_FILE_SAVE(`Error generating CSV: ${error.message}`), 'error');
     }
 }
 
@@ -145,5 +197,6 @@ module.exports = {
     closeReadline,
     saveLinksToFile,
     saveQaToFile,
-    printSeparator
+    printSeparator,
+    generateCSVFromQa
 };
