@@ -3,7 +3,6 @@ const fs = require('fs');
 const readline = require('readline');
 
 // --- CHALK FIX AND SETUP ---
-// Access default export for compatibility with modern Chalk versions (v5+).
 let chalk = require('chalk'); 
 if (chalk && chalk.default) { 
     chalk = chalk.default; 
@@ -20,7 +19,9 @@ if (chalk && chalk.default) {
 
 // --- CONFIGURATION ---
 const DEFAULT_URL = "https://www.freecram.net/torrent/Salesforce.Agentforce-Specialist.v2025-09-22.q27.html";
-const DEFAULT_FILENAME = 'scraped_links.txt';
+const DEFAULT_FILENAME_LINKS = 'scraped_links.txt';
+const DEFAULT_FILENAME_QA = 'scraped_questions_answers.json';
+const SCRAPING_DELAY_MS = 100;
 
 // Setup readline for user input
 const rl = readline.createInterface({
@@ -31,9 +32,15 @@ const rl = readline.createInterface({
 // --- HELPER FUNCTIONS ---
 
 /**
+ * Función de retardo.
+ * @param {number} ms Milisegundos a esperar.
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
  * Logs a styled message to the console.
- * @param {string} message The message to log.
- * @param {'info'|'success'|'warn'|'error'|'start'} type The type of message.
  */
 function log(message, type = 'info') {
     switch (type) {
@@ -59,40 +66,52 @@ function log(message, type = 'info') {
 
 /**
  * Prompts the user for input using readline.
- * @param {string} question The question to ask.
- * @returns {Promise<string>} The user's answer.
  */
 function askQuestion(question) {
   return new Promise((resolve) => {
+    // La Y en mayúscula indica que es la opción por defecto.
     rl.question(chalk.yellow(question), (answer) => {
       resolve(answer);
     });
   });
 }
 
+/**
+ * Displays the questions links and titles in the console.
+ */
+function displayQuestions(questions) {
+  if (!questions || questions.length === 0) {
+    log("\nNo questions found to display.", 'error');
+    return;
+  }
+  
+  console.log(chalk.gray('\n' + '='.repeat(80)));
+  console.log(chalk.bold.yellow(`📚 EXAM QUESTION LIST - Total: ${questions.length} questions`));
+  console.log(chalk.gray('='.repeat(80)));
+  
+  questions.forEach((q, index) => {
+    console.log(chalk.cyan(`\n${q.questionNumber || (index + 1)}. ${q.fullQuestionText}`));
+    console.log(chalk.blue.underline(`   🔗 ${q.fullUrl}`));
+  });
+}
 
-// --- CORE SCRAPING LOGIC ---
+// --- STAGE 1: INITIAL LINK SCRAPING LOGIC ---
 
 /**
- * Scrapes questions from the specified URL.
- * @param {string} url The URL to scrape.
- * @returns {Promise<Array<Object>>} A promise that resolves to an array of question objects.
+ * Scrapes questions links from the main list page.
  */
 async function scrapeExamQuestions(url) {
     let browser;
     
     try {
-        log(`Initializing headless browser...`);
-        log(`Accessing: ${url}`);
+        log(`Initializing headless browser for link extraction...`);
         
-        // Puppeteer setup with anti-detection args
         browser = await puppeteer.launch({
             headless: 'new',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-web-security',
-                '--disable-features=IsolateOrigins,site-per-process',
                 '--window-size=1920,1080',
                 '--disable-blink-features=AutomationControlled'
             ],
@@ -100,40 +119,21 @@ async function scrapeExamQuestions(url) {
         });
         
         const page = await browser.newPage();
-        
-        // Anti-bot configuration
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-        await page.setExtraHTTPHeaders({
-            'Accept-Language': 'en-US,en;q=0.9',
-        });
-        await page.evaluateOnNewDocument(() => {
-            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-        });
-        
-        log('Navigating to the page...');
-        await page.goto(url, {
-            waitUntil: 'networkidle2',
-            timeout: 60000
-        });
-        
-        log('Waiting for content to load...');
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
         
         // Content loading strategy
         try {
             await page.waitForSelector('dl.barlist', { timeout: 10000 });
-            log('Content structure found.', 'success');
         } catch (error) {
-            log('Specific selector not found, waiting fixed time...', 'warn');
             await page.waitForTimeout(5000);
         }
         
-        // --- CONTENT EXTRACTION ---
-        log('\nExtracting content...');
+        log('\nExtracting links and titles...');
         
         const questions = await page.evaluate(() => {
             const questionsList = [];
             
-            // Function to robustly find the container element
             function findQuestionsContainer() {
                 let container = document.querySelector('dl.barlist');
                 if (!container) { 
@@ -166,12 +166,16 @@ async function scrapeExamQuestions(url) {
                     const href = link.getAttribute('href') || '';
                     let questionText = link.textContent.trim();
                     
-                    // Clean text (remove question number, inline spans, and normalize whitespace)
+                    // 1. Extract the number
+                    const match = questionText.match(/Question\s*(\d+):/i);
+                    const questionNumber = match ? parseInt(match[1], 10) : null;
+                    
+                    // 2. Clean text for title/display
                     let cleanText = questionText.replace(/Question\s+\d+:\s*/i, '');
                     cleanText = cleanText.replace(/<span.*?<\/span>/gi, '');
                     cleanText = cleanText.replace(/\s+/g, ' ').trim();
                     
-                    // Build full URL
+                    // 3. Build full URL
                     let fullUrl = href;
                     if (href.startsWith('/')) {
                         const baseUrl = window.location.origin;
@@ -181,6 +185,7 @@ async function scrapeExamQuestions(url) {
                     questionsList.push({
                         fullUrl,
                         fullQuestionText: cleanText,
+                        questionNumber: questionNumber
                     });
                 }
             });
@@ -188,12 +193,129 @@ async function scrapeExamQuestions(url) {
             return questionsList;
         });
         
-        log(`\nFound ${questions.length} questions.`, 'success');
+        log(`\nFound ${questions.length} links.`, 'success');
         
         return questions;
         
     } catch (error) {
-        log(`Scraping Error: ${error.message}`, 'error');
+        log(`Link Extraction Error: ${error.message}`, 'error');
+        return [];
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
+    }
+}
+
+// --- STAGE 2: DEEP CONTENT SCRAPING LOGIC (Using SCRAPING_DELAY_MS) ---
+
+/**
+ * Visits each link to scrape the question, options, and answer letter.
+ */
+async function scrapeDeepContent(linksArray) {
+    const scrapedData = [];
+    let browser;
+
+    if (linksArray.length === 0) {
+        log('No links provided for deep scraping.', 'warn');
+        return [];
+    }
+    
+    try {
+        log(`\nStarting deep content scraping for ${linksArray.length} links...`, 'start');
+
+        browser = await puppeteer.launch({
+            headless: 'new',
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-web-security',
+                '--window-size=1200,800',
+            ],
+            ignoreHTTPSErrors: true
+        });
+
+        const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        
+        for (let i = 0; i < linksArray.length; i++) {
+            const link = linksArray[i];
+            const url = link.fullUrl;
+            
+            log(`[${i + 1}/${linksArray.length}] Visiting: ${url}`, 'info');
+
+            try {
+                await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+                
+                // Wait for the main QA container to load
+                await page.waitForSelector('.qa', { timeout: 15000 });
+
+                const qaItem = await page.evaluate((qNum) => { 
+                    
+                    const qaContainer = document.querySelector('.qa');
+
+                    if (!qaContainer) {
+                        return { error: 'QA container not found.' };
+                    }
+                    
+                    const questionEl = qaContainer.querySelector('.qa-question');
+                    const optionsEl = qaContainer.querySelector('.qa-options');
+                    const answerExpEl = qaContainer.querySelector('.qa-answerexp');
+                    
+                    const options = [];
+                    if (optionsEl) {
+                        // FIX: Targeting <p> then <label>
+                        optionsEl.querySelectorAll('p label').forEach(labelEl => {
+                            let text = labelEl.textContent.trim();
+                            options.push(text);
+                        });
+                    }
+
+                    // Extract ONLY the answer letter(s)
+                    const explanationText = answerExpEl ? answerExpEl.textContent.trim() : '';
+                    const answerMatch = explanationText.match(/Correct Answer:\s*([A-Z, ]+)/i);
+                    const finalAnswer = answerMatch && answerMatch[1] 
+                                        ? answerMatch[1].replace(/,\s*$/, '').trim()
+                                        : 'N/A'; 
+
+                    return {
+                        questionNumber: qNum,
+                        question: questionEl ? questionEl.textContent.trim() : 'N/A (Question Missing)',
+                        options: options,
+                        answer: finalAnswer
+                    };
+                }, link.questionNumber);
+
+                if (qaItem.error) {
+                    throw new Error(qaItem.error);
+                }
+
+                scrapedData.push(qaItem);
+                
+                // --- DELAY IMPLEMENTATION (Using Constant) ---
+                await sleep(SCRAPING_DELAY_MS); 
+                // ---------------------------------------------
+
+            } catch (pageError) {
+                log(`Failed to scrape link ${i + 1} (${link.questionNumber}): ${pageError.message.substring(0, 100)}...`, 'warn');
+                scrapedData.push({
+                    questionNumber: link.questionNumber,
+                    question: 'ERROR: Could not load or find content.',
+                    options: [],
+                    answer: 'N/A',
+                    url: url
+                });
+                
+                // Still add a delay even on failure
+                await sleep(SCRAPING_DELAY_MS); 
+            }
+        }
+
+        log(`\nSuccessfully scraped detailed content for ${scrapedData.length} items.`, 'success');
+        return scrapedData;
+        
+    } catch (error) {
+        log(`Critical Deep Scraping Error: ${error.message}`, 'error');
         return [];
     } finally {
         if (browser) {
@@ -203,36 +325,11 @@ async function scrapeExamQuestions(url) {
     }
 }
 
+
 // --- OUTPUT HANDLERS ---
 
-/**
- * Displays the questions in the console.
- * @param {Array<Object>} questions 
- */
-function displayQuestions(questions) {
-  if (!questions || questions.length === 0) {
-    log("\nNo questions found to display.", 'error');
-    return;
-  }
-  
-  console.log(chalk.gray('\n' + '='.repeat(80)));
-  console.log(chalk.bold.yellow(`📚 EXAM QUESTION LIST - Total: ${questions.length} questions`));
-  console.log(chalk.gray('='.repeat(80)));
-  
-  questions.forEach((q, index) => {
-    console.log(chalk.cyan(`\n${index + 1}. ${q.fullQuestionText}`));
-    console.log(chalk.blue.underline(`   🔗 ${q.fullUrl}`));
-  });
-}
-
-/**
- * Saves the links to a file in the format: links = [link1, link2, ...]
- * @param {Array<Object>} questions The array of question objects.
- * @param {string} filename The name of the file to save.
- */
 function saveLinksToFile(questions, filename) {
   try {
-    // Map links and wrap them in quotes for list format
     const linkList = questions.map(q => `  "${q.fullUrl}"`).join(',\n');
     
     let content = `// Scraped on: ${new Date().toLocaleString()}\n`;
@@ -246,6 +343,16 @@ function saveLinksToFile(questions, filename) {
   }
 }
 
+function saveQaToFile(qaData, filename) {
+    try {
+        const jsonContent = JSON.stringify(qaData, null, 2);
+        fs.writeFileSync(filename, jsonContent, 'utf8');
+        log(`Structured QA data saved successfully to: ${filename}`, 'success');
+    } catch (error) {
+        log(`Error saving QA file: ${error.message}`, 'error');
+    }
+}
+
 // --- MAIN EXECUTION ---
 
 async function main() {
@@ -254,31 +361,58 @@ async function main() {
   console.log(chalk.green('='.repeat(80)));
   
   const testUrl = DEFAULT_URL;
-
-  // Ask for URL
-  const userUrl = await askQuestion(`\n🌐 Enter the URL (Press Enter to use test URL: ${testUrl}): `);
+  
+  // 1. Initial URL Prompt
+  const userUrl = await askQuestion(`\n🌐 Enter the list URL (Press Enter to use test URL: ${testUrl}): `);
   const url = userUrl.trim() || testUrl;
   
   console.log('\n' + chalk.green('='.repeat(80)));
-  log('STARTING SCRAPING PROCESS...', 'start');
+  log('STAGE 1: STARTING LINK EXTRACTION...', 'start');
   console.log(chalk.green('='.repeat(80)));
   
-  // Scrape the questions
-  const questions = await scrapeExamQuestions(url);
+  // 2. Scrape links
+  const questionLinks = await scrapeExamQuestions(url);
   
-  if (questions.length > 0) {
-    // Display questions
-    displayQuestions(questions);
+  if (questionLinks.length > 0) {
+    // 3. Display and Save Links
+    displayQuestions(questionLinks);
     
-    // Save to file
-    const saveAnswer = await askQuestion("\n💾 Save link list to file (links = [...])? (y/n): ");
-    if (saveAnswer.toLowerCase() === 'y') {
-      const filenameAnswer = await askQuestion(`📄 Enter filename (${DEFAULT_FILENAME}): `);
-      const filename = filenameAnswer.trim() || DEFAULT_FILENAME;
-      saveLinksToFile(questions, filename);
+    // Y/n prompt default
+    const saveAnswer = await askQuestion("\n💾 Save the link list to a file (links = [...])? (Y/n): ");
+    if (saveAnswer.toLowerCase() === 'y' || saveAnswer === '') {
+      const filenameAnswer = await askQuestion(`📄 Enter filename (${DEFAULT_FILENAME_LINKS}): `);
+      const filename = filenameAnswer.trim() || DEFAULT_FILENAME_LINKS;
+      saveLinksToFile(questionLinks, filename);
     }
+    
+    // Y/n prompt default
+    const deepScrapeAnswer = await askQuestion(`\n🧠 Do you want to perform deep scraping (Q/A/Options) on the ${questionLinks.length} links found? (Y/n): `);
+    
+    if (deepScrapeAnswer.toLowerCase() === 'y' || deepScrapeAnswer === '') {
+        
+        console.log('\n' + chalk.green('='.repeat(80)));
+        log('STAGE 2: STARTING DEEP CONTENT SCRAPING...', 'start');
+        console.log(chalk.green('='.repeat(80)));
+
+        // 4. Perform Deep Scraping
+        const qaData = await scrapeDeepContent(questionLinks);
+
+        if (qaData.length > 0) {
+            // Y/n prompt default
+            const saveQaAnswer = await askQuestion(`\n💾 Save structured Q/A data (JSON format) for ${qaData.length} items? (Y/n): `);
+
+            if (saveQaAnswer.toLowerCase() === 'y' || saveQaAnswer === '') {
+                const qaFilenameAnswer = await askQuestion(`📄 Enter filename (${DEFAULT_FILENAME_QA}): `);
+                const qaFilename = qaFilenameAnswer.trim() || DEFAULT_FILENAME_QA;
+                saveQaToFile(qaData, qaFilename);
+            }
+        } else {
+             log('\n⚠️  Deep scraping finished, but no structured data was collected.', 'error');
+        }
+    }
+    
   } else {
-    log('\n⚠️  No questions were found.', 'error');
+    log('\n⚠️  No links were found during the initial scraping stage.', 'error');
   }
   
   console.log('\n' + chalk.green('='.repeat(80)));
