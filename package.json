@@ -179,19 +179,18 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/d4bit/generateCSVFreecram.git"
+    "url": "git+https://github.com/d4bit/FreecramQuestionScraper.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "DabitForce",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/d4bit/generateCSVFreecram/issues"
+    "url": "https://github.com/d4bit/FreecramQuestionScraper/issues"
   },
-  "homepage": "https://github.com/d4bit/generateCSVFreecram#readme"
+  "homepage": "https://github.com/d4bit/FreecramQuestionScraper#readme"
 }

@@ -225,7 +225,7 @@ async function scrapeDeepContent(linksArray) {
                 await sleep(SCRAPING_DELAY_MS); 
 
             } catch (pageError) {
-                logProgress(`SCRAPING PROGRESS: ${progress}% (${i + 1}/${linksArray.length}) - ERROR on Q${link.questionNumber}`);
+                logProgress(`SCRAPING PROGRESS: ${progress}% (${i + 1}/${linksArray.length}) - ERROR on Question ${link.questionNumber}`);
                 console.log();
                 log(MESSAGES.ERROR_SCRAPE_FAIL(i + 1, link.questionNumber, pageError.message.substring(0, 100)), 'warn');
                 

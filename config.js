@@ -11,7 +11,7 @@ const SCRAPING_DELAY_MS = 350;
 
 // --- MESSAGE STRINGS ---
 const MESSAGES = {
-    CLI_HEADER: '🤖 FREECRAM QUESTIONS SCRAPER',
+    CLI_HEADER: '🤖 FREECRAM QUESTIONS SCRAPER | by DabitForce',
     STAGE_1_START: 'STAGE 1: STARTING LINK EXTRACTION...',
     STAGE_2_START: 'STAGE 2: STARTING DEEP CONTENT SCRAPING...',
     PROCESS_COMPLETED: 'PROCESS COMPLETED',
@@ -25,10 +25,10 @@ const MESSAGES = {
     LOG_DEEP_SUCCESS: (count) => `Successfully scraped detailed content for ${count} items.`,
     LOG_DEEP_FAIL_EMPTY: '⚠️  Deep scraping finished, but no structured data was collected.',
     LOG_NO_LINKS_FOUND: '⚠️  No links were found during the initial scraping stage.',
-    PROMPT_URL: (url) => `🌐 Enter the list URL (Press Enter to use test URL: ${url}): `,
-    PROMPT_SAVE_LINKS: "💾 Save the link list to a file (links = [...])? (Y/n): ",
+    PROMPT_URL: (url) => `🌐 Enter the list URL (Press Enter to use test URL): `,
+    PROMPT_SAVE_LINKS: "💾 Save the link list to a file? (Y/n): ",
     PROMPT_LINKS_FILENAME: (defaultName) => `📄 Enter filename (${defaultName}): `,
-    PROMPT_DEEP_SCRAPE: (count) => `🧠 Do you want to perform deep scraping (Q/A/Options) on the ${count} links found? (Y/n): `,
+    PROMPT_DEEP_SCRAPE: (count) => `🧠 Do you want to perform deep scraping on the ${count} questions found? (Y/n): `,
     PROMPT_SAVE_QA: (count) => `💾 Save structured Q/A data (JSON format) for ${count} items? (Y/n): `,
     PROMPT_QA_FILENAME: (defaultName) => `📄 Enter filename (${defaultName}): `,
     ERROR_LINK_EXTRACT: (msg) => `Link Extraction Error: ${msg}`,
