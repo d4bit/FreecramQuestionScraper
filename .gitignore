@@ -7,3 +7,5 @@ Node_modules/
 __pycache__/
 *.log
 .idea/
+*.txt
+*.csv
